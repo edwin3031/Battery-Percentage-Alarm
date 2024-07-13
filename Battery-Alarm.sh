@@ -1,5 +1,16 @@
 #!/bin/bash
 
+# Detect the path to the directory where the script is located
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+
+# Icon directory relative to the script directory
+ICONS_DIR="$SCRIPT_DIR/Icons"
+
+# Low, critical and high battery percentage
+BATTERY_LOW_THRESHOLD=15
+BATTERY_CRITICAL_THRESHOLD=5
+BATTERY_HIGH_THRESHOLD=95
+
 # Function to show notification
 show_notification() {
     local msg="$1"
@@ -39,4 +50,29 @@ is_battery_charging() {
     else
         return 1
     fi
+}
+
+# Function to check the battery status and display the corresponding notification
+check_battery_status() {
+    local battery_capacity=$(get_battery_capacity)
+    local battery_status=$(get_battery_status)
+    
+    if [[ $battery_status == "Discharging" && $battery_capacity -lt $BATTERY_CRITICAL_THRESHOLD ]]; then
+        if ! is_battery_charging; then
+            show_notification "¡Atención! ¡La batería está a punto de agotarse! La batería está al $battery_capacity%." "$ICONS_DIR/battery_empty_icon.png"
+            last_notification_time=$(date +%s)
+            return
+        fi
+    elif [[ $battery_status == "Discharging" && $battery_capacity -lt $BATTERY_LOW_THRESHOLD ]]; then
+        if ! is_battery_charging; then
+            show_notification "¡Reconéctate! La batería está al $battery_capacity%." "$ICONS_DIR/battery_low_icon.png"
+            last_notification_time=$(date +%s)
+            return
+        fi
+    elif [[ $battery_status == "Charging" && $battery_capacity -gt $BATTERY_HIGH_THRESHOLD ]]; then
+    if is_battery_charging; then
+        show_notification "¡Desconéctate! La batería está al $battery_capacity%. Por favor, desconéctala." "$ICONS_DIR/charging_battery_icon.png"
+        last_notification_time=$(date +%s)
+    fi
+fi
 }
