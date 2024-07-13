@@ -59,19 +59,19 @@ check_battery_status() {
     
     if [[ $battery_status == "Discharging" && $battery_capacity -lt $BATTERY_CRITICAL_THRESHOLD ]]; then
         if ! is_battery_charging; then
-            show_notification "¡Atención! ¡La batería está a punto de agotarse! La batería está al $battery_capacity%." "$ICONS_DIR/battery_empty_icon.png"
+            show_notification "Attention! The battery is about to run out! Battery is at $battery_capacity%." "$ICONS_DIR/battery_empty_icon.png"
             last_notification_time=$(date +%s)
             return
         fi
     elif [[ $battery_status == "Discharging" && $battery_capacity -lt $BATTERY_LOW_THRESHOLD ]]; then
         if ! is_battery_charging; then
-            show_notification "¡Reconéctate! La batería está al $battery_capacity%." "$ICONS_DIR/battery_low_icon.png"
+            show_notification "Get connected! Battery is at $battery_capacity%." "$ICONS_DIR/battery_low_icon.png"
             last_notification_time=$(date +%s)
             return
         fi
     elif [[ $battery_status == "Charging" && $battery_capacity -gt $BATTERY_HIGH_THRESHOLD ]]; then
     if is_battery_charging; then
-        show_notification "¡Desconéctate! La batería está al $battery_capacity%. Por favor, desconéctala." "$ICONS_DIR/charging_battery_icon.png"
+        show_notification "Disconnect! The battery is at $battery_capacity%. Please disconnect it." "$ICONS_DIR/charging_battery_icon.png"
         last_notification_time=$(date +%s)
     fi
 fi
