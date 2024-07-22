@@ -11,6 +11,15 @@ BATTERY_LOW_THRESHOLD=15
 BATTERY_CRITICAL_THRESHOLD=5
 BATTERY_HIGH_THRESHOLD=95
 
+# Duration of the notification in milliseconds (10 seconds)
+DURATION=90000
+
+# Minimum interval between notifications in seconds (1 minute)
+MIN_INTERVAL=60
+
+# Memory usage threshold in percent to free up script memory
+MEMORY_THRESHOLD=10
+
 # Function to show notification
 show_notification() {
     local msg="$1"
@@ -76,3 +85,41 @@ check_battery_status() {
     fi
 fi
 }
+
+# Function to release script memory
+release_memory() {
+    echo "Freeing script memory..."
+    
+    # Clean large or no longer needed variables
+    unset battery_capacity
+    unset battery_status
+    
+    #Clear cache and buffers associated with the script process
+    sync; echo 1 > /proc/sys/vm/drop_caches
+}
+
+# Loop to continuously check battery and memory status
+while true; do
+    # Get current time
+    current_time=$(date +%s)
+    
+    # Check if the minimum interval has elapsed since the last notification
+    time_since_last_notification=$((current_time - last_notification_time))
+    if [ $time_since_last_notification -ge $MIN_INTERVAL ]; then
+        # Check battery status
+        check_battery_status
+        
+        # Update the time of the last notification
+        last_notification_time=$(date +%s)
+    fi
+    
+     # Get script memory usage in percentage
+    memory_usage=$(ps -o %mem -p $$ | awk 'NR==2 {print $1}')
+
+     # If the script memory usage exceeds the threshold, free memory.
+    if (( $(echo "$memory_usage >= $MEMORY_THRESHOLD" | bc -l) )); then
+        release_memory
+    fi
+    
+    sleep 1
+done
