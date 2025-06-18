@@ -2,6 +2,8 @@
 ## Table of Contents
 
   - [Introduction](#introduction)
+    - [Screenshots](#screenshots)
+    - [Manual Adjustment](#manual-adjustment)
   - [Prerequisites](#prerequisites)
     - [Install notify-send](#install-notify-send)
       - [Debian/Ubuntu](#debian/ubuntu)
@@ -35,7 +37,13 @@
 ## Introduction
 Hello everyone! Battery Percentage Alarm is a bash script designed to remind you to connect or disconnect your laptop's power cable when the battery reaches a specific charge percentage.
 
-You can manually adjust the battery charge percentage thresholds in the .sh file. The default values are
+### Screenshots
+Some screenshots of the script running
+| ![Battery Disconnect Notification](img/Disconnect.png) | ![Low Battery Notification](img/low.png) | ![Battery Critical Notification](img/critical.png) |
+|-------------------------------------------|-------------------------------------------|-------------------------------------------|
+
+### Manual Adjustment
+You can manually adjust the battery charge percentage thresholds in the .sh file. The default values are:
 
     BATTERY_LOW_THRESHOLD=20
     BATTERY_CRITICAL_THRESHOLD=10
